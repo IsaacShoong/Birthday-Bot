@@ -34,20 +34,59 @@ def loadFile(fileName):
     inFile.close()
     return birthdaysDict
 
+def leapYear(year): #Checks if leap year
+    if (year % 4) == 0:  
+        if (year % 100) == 0:  
+            if (year % 400) == 0:  
+                return True 
+            else:  
+                return False  
+        else:  
+            return True  
+    else:  
+        return False  
+
+def checkMonth(date): #Checks for the maximum month date
+    longMonth = ["01","03","05","07","08","10","12"]
+    shortMonth = ["04","06","09","11"]
+    leapMonth = ["02"]
+    if date[:2] in leapMonth:
+        isLeapYear = leapYear(int(date[6:10]))
+        if isLeapYear == True:
+            return 29
+        else:
+            return 28
+    elif date[:2] in longMonth:
+        return 31
+    elif date[:2] in shortMonth:
+        return 30
+    else:
+        return False
+
 def getUserInfo(userInfo):
     newUserInfo = userInfo.split(",")
     userName = newUserInfo[0]
     userName = userName.strip()
-    if len(newUserInfo[1]) != 10:
+    newUserInfo[1] = newUserInfo[1].replace(" ","")
+    maxDate = checkMonth(newUserInfo[1]) #Gets max date
+    if maxDate == False: #If max date isn't correct
+        return False
+    if len(newUserInfo[1]) != 10: #If user input isn't correct format
+        return False
+    elif newUserInfo[1][:2] < "01" or newUserInfo[1][:2] > "12": #If month isn't a correct month
+        return False
+    elif newUserInfo[1][3:5] < "1" or newUserInfo[1][3:5] > str(maxDate): #If date isn't a correct date
+        return False
+    elif newUserInfo[1][6:10] < "0": #if year isn't propper
         return False
     else:
         userBirthday = newUserInfo[1]
         userBirthday = userBirthday.strip()
         userBirthdayTest = userBirthday.replace("/","")
-        if len(userBirthdayTest) != 8:
+        if len(userBirthdayTest) != 8: #Checks if date is correct format
             return False
         try:
-            checkUserBirthday = int(userBirthdayTest) 
+            checkUserBirthday = int(userBirthdayTest) #Checks if birthday only uses numbers
         except:
             return False
     return [userName,userBirthday]
@@ -77,7 +116,7 @@ def getDate():
     print(combinedDate)
     return(combinedDate)
 
-def checkDict():
+def checkDict(): #Checks if there is a birthday
     print("In checkDict")
     userNames = []
     birthdaysDict = loadFile(fileName)
@@ -89,12 +128,11 @@ def checkDict():
             print(userNames)
     return userNames
 
-def findUser(dictionary,user):
+def findUser(dictionary,user): #Finds user
     for key in dictionary:
         if user == key:
             return dictionary[key]
     return False
-
 
 birthdaysDict = loadFile(fileName) #Get's dictionary
 
